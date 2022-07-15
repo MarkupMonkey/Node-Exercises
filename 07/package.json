@@ -1,0 +1,14 @@
+{
+  "name": "07",
+  "version": "1.0.0",
+  "description": "develhope node js exercise 07",
+  "main": "app.js",
+  "dependencies": {
+    "figlet": "^1.5.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marco Moncada",
+  "license": "ISC"
+}
