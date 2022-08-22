@@ -3,11 +3,12 @@ const app = express();
 const cors = require('cors');
 
 const prisma = require('../lib/prisma/client');
-const {
-    validate,
-    validationErrorMiddleware,
-} = require('../lib/validation/index');
+const { validate, validationErrorMiddleware } = require('../lib/validation/index');
 const planetSchema = require('../lib/validation/planet');
+
+const { initMulterMiddleware } = require('../lib/middleware/multer')
+
+const upload = initMulterMiddleware();
 
 const corsOption = {
     origin: 'http://localhost:8080'
@@ -85,6 +86,30 @@ app.delete('/planets/:id(\\d+)', async (req, res, next) => {
     }
 
 });
+
+app.post('/planets/:id(\\d+)/photo',
+    upload.single('photo'),
+    async (req, res, next) => {
+        if (!req.file) {
+            res.status(400);
+            return next('No photo file uploaded');
+        }
+
+        const planetId = Number(req.params.id);
+        const photoFilename = req.file.filename;
+
+        try {
+            await prisma.planet.update({
+                where: { id: planetId },
+                data: { photoFilename },
+            });
+        } catch (err) {
+            res.status(404);
+            next(`Cannot POST /planets/${planetId}/photo`);
+        }
+
+        res.status(201).json({ photoFilename });
+    });
 
 app.use(validationErrorMiddleware);
 
