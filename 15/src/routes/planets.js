@@ -1,9 +1,7 @@
 const express = require('express');
 const prisma = require('../lib/prisma/client');
-const {
-    validate,
-    validationErrorMiddleware,
-} = require('../lib/middleware/validation/index');
+const { validate } = require('../lib/middleware/validation/index');
+const { checkAuthorization } = require('../lib/middleware/passport');
 const planetSchema = require('../lib/middleware/validation/planet');
 const { initMulterMiddleware } = require('../lib/middleware/multer');
 
@@ -11,13 +9,13 @@ const upload = initMulterMiddleware();
 
 const router = express.Router();
 
-router.get('/planets', async (req, res) => {
+router.get('/', async (req, res) => {
     const planets = await prisma.planet.findMany();
 
     res.json(planets);
 });
 
-router.get('/planets/:id(\\d+)', async (req, res, next) => {
+router.get('/:id(\\d+)', async (req, res, next) => {
     const planetId = Number(req.params.id);
 
     const planet = await prisma.planet.findUnique({
@@ -32,27 +30,36 @@ router.get('/planets/:id(\\d+)', async (req, res, next) => {
     res.json(planet);
 });
 
-router.post('/planets', validate({ body: planetSchema }), async (req, res) => {
-    const planetData = req.body;
+router.post(
+    '/',
+    checkAuthorization,
+    validate({ body: planetSchema }),
+    async (req, res) => {
 
-    const planet = await prisma.planet.create({
-        data: planetData,
-    });
+        const planetData = req.body;
+        const username = req.user?.username;
 
-    res.status(201).json(planet);
-});
+        const planet = await prisma.planet.create({
+            data: { ...planetData, createdBy: username, updatedBy: username },
+        });
+
+        res.status(201).json(planet);
+    }
+);
 
 router.put(
-    '/planets/:id(\\d+)',
+    '/:id(\\d+)',
+    checkAuthorization,
     validate({ body: planetSchema }),
     async (req, res, next) => {
         const planetData = req.body;
         const planetId = Number(req.params.id);
+        const username = req.user?.username;
 
         try {
             const planet = await prisma.planet.update({
                 where: { id: planetId },
-                data: planetData,
+                data: { ...planetData, updatedBy: username },
             });
             res.status(200).json(planet);
         } catch (err) {
@@ -62,7 +69,7 @@ router.put(
     }
 );
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', checkAuthorization, async (req, res, next) => {
     const planetId = Number(req.params.id);
 
     try {
@@ -78,6 +85,7 @@ router.delete('/:id(\\d+)', async (req, res, next) => {
 
 router.post(
     '/:id(\\d+)/photo',
+    checkAuthorization,
     upload.single('photo'),
     async (req, res, next) => {
         if (!req.file) {
