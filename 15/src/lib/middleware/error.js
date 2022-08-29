@@ -1,4 +1,4 @@
-const { STATUS_CODE } = require('node:http');
+const { STATUS_CODE } = require('http');
 const { Response, ResponseHandler, ErrorRequestHandler } = require('express');
 
 const getErrorMessage = (error) => {

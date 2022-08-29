@@ -1,5 +1,5 @@
 const multer = require('multer');
-const { randomUUID } = require('node:crypto');
+const { randomUUID } = require('crypto');
 const mime = require('mime');
 
 const storage = multer.diskStorage({

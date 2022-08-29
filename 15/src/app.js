@@ -49,7 +49,7 @@ app.get(
 app.get(
     '/auth/github/callback',
     passport.authenticate('github', {
-        failureRedirect: 'auth/github/login',
+        failureRedirect: '/auth/github/login',
         keepSessionInfo: true,
     }),
     (req, res) => {
@@ -60,7 +60,7 @@ app.get(
 );
 
 app.get('/auth/logout', (req, res, next) => {
-    if (typeof req.query.redirectTo !== 'string' || !request.query.redirectTo) {
+    if (typeof req.query.redirectTo !== 'string' || !req.query.redirectTo) {
         res.status(400);
         return next('Missing redirectTo query string parameter');
     }
@@ -74,8 +74,8 @@ app.get('/auth/logout', (req, res, next) => {
     });
 });
 
-// app.use(notFoundMiddleware);
-// app.use(initErrorMiddleware(app.get('env')));
-// app.use(validationErrorMiddleware);
+app.use(notFoundMiddleware);
+app.use(initErrorMiddleware(app.get('env')));
+app.use(validationErrorMiddleware);
 
 module.exports = app;
