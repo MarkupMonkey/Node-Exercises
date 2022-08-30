@@ -14,11 +14,14 @@ const isErrorStatusCode = (statusCode) => statusCode >= 400 && statusCode < 600;
 const getHttpStatusCode = (error, res) => {
     const statusCodeFromError = error.status || error.statusCode;
 
-    if (statusCodeFromError && isErrorStatusCode(statusCodeFromError))
+    if (statusCodeFromError && isErrorStatusCode(statusCodeFromError)) {
         statusCodeFromError;
+    }
 
     const statusCodeFromResponse = res.statusCode;
-    if (isErrorStatusCode(statusCodeFromResponse)) statusCodeFromResponse;
+    if (isErrorStatusCode(statusCodeFromResponse)) {
+        statusCodeFromResponse;
+    }
 
     return 500;
 };

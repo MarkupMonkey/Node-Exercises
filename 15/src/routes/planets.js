@@ -43,7 +43,7 @@ router.post(
             data: { ...planetData, createdBy: username, updatedBy: username },
         });
 
-        res.status(201).json(planet);
+        // res.status(201).json(planet);
     }
 );
 

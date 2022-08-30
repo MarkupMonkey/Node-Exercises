@@ -7,10 +7,10 @@ const validationErrorMiddleware =
 const initSessionMiddleware = require('./lib/middleware/session');
 const { passport } = require('./lib/middleware/passport');
 const authRoutes = require('./routes/auth');
-const {
-    notFoundMiddleware,
-    initErrorMiddleware,
-} = require('./lib/middleware/error');
+// const {
+//     notFoundMiddleware,
+//     initErrorMiddleware,
+// } = require('./lib/middleware/error');
 
 app.use(initSessionMiddleware(app.get('env')));
 
@@ -27,8 +27,8 @@ app.use('/planets', planetsRoutes);
 app.get('/', (req, res) => {
     res.send('ciao mbare tutto ok')
 });
-
 app.get('/auth/login', (req, res, next) => {
+
     if (typeof req.query.redirectTo !== 'string' || !req.query.redirectTo) {
         res.status(400);
         return next('Missing redirectTo query string parameter');
@@ -44,6 +44,7 @@ app.get(
     passport.authenticate('github', {
         scope: ['user:email'],
     })
+
 );
 
 app.get(
@@ -74,8 +75,9 @@ app.get('/auth/logout', (req, res, next) => {
     });
 });
 
-app.use(notFoundMiddleware);
-app.use(initErrorMiddleware(app.get('env')));
-app.use(validationErrorMiddleware);
+
+// app.use(notFoundMiddleware);
+// app.use(initErrorMiddleware(app.get('env')));
+// app.use(validationErrorMiddleware);
 
 module.exports = app;

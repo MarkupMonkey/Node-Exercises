@@ -25,7 +25,7 @@ passport.deserializeUser((user, done) => done(null, user));
 const checkAuthorization = (req, res, next) => {
     if (req.isAuthenticated()) next();
 
-    res.status(401).end();
+    res.status(401).json({ message: 'not logged' })
 };
 
 module.exports = { passport, checkAuthorization };

@@ -50,14 +50,13 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            token: "",
           },
           body: formDataJsonString,
           credentials: "include",
         });
 
         const planet = await response.json();
-        console.dir(planet);
+        console.log(planet);
       }
 
       const addForm = document.getElementById("form-add");
